@@ -80,6 +80,10 @@ func (q *QuickUnion) New(size int) {
 }
 
 func (q *QuickUnion) Find(x int) (int, error) {
+	if x < 0 || x >= len(q.root) {
+		return -1, fmt.Errorf("index out of bounds")
+	}
+
 	for x != q.root[x] {
 		x = q.root[x]
 	}
