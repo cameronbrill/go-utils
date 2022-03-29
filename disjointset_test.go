@@ -4,7 +4,7 @@ import "testing"
 
 type test struct {
 	name string
-	disjointSetImpl DisjointSet
+	disjointSetImpl UnionFinder
 }
 
 func TestUnionFind(t *testing.T) {

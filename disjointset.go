@@ -2,24 +2,17 @@ package main
 
 import "fmt"
 
-type DisjointSet interface {
+type UnionFinder interface {
 	New(size int)
 	Union(x, y int)  error
 	Find(x int) (int, error)
 	Connected(x, y int) (bool, error)
 }
 
-func new(size int) []int {
-	t := make([]int, size)
-	for i := range t {
-		t[i] = i
-	}
-	return t
-}
 
 type QuickFind struct {
 	root []int
-	DisjointSet
+	UnionFinder
 }
 
 func (q *QuickFind) New(size int) {
@@ -73,7 +66,7 @@ func (q *QuickFind) Connected(x, y int) (bool, error) {
 
 type QuickUnion struct {
 	root []int
-	DisjointSet
+	UnionFinder
 }
 
 func (q *QuickUnion) New(size int) {
@@ -127,20 +120,11 @@ func (q *QuickUnion) Connected(x, y int) (bool, error) {
 type UnionByRank struct {
 	root []int
 	rank []int
-	DisjointSet
+	UnionFinder
 }
 
 func (q *UnionByRank) New(size int) {
-	rt := make([]int, size)
-	rk := make([]int, size)
-
-	for i := range rt {
-		rt[i] = i
-		rk[i] = 1
-	}
-
-	q.root = rt
-	q.rank = rk
+	q.root, q.rank = newRank(size)
 }
 
 func (q *UnionByRank) Find(x int) (int, error) {
@@ -196,7 +180,7 @@ func (q *UnionByRank) Connected(x, y int) (bool, error) {
 
 type PathCompression struct {
 	root []int
-	DisjointSet
+	UnionFinder
 }
 
 func (q *PathCompression) New(size int) {
@@ -252,4 +236,22 @@ func (q *PathCompression) Connected(x, y int) (bool, error) {
 	}
 
 	return xp == yp, nil
+}
+
+func new(size int) []int {
+	t := make([]int, size)
+	for i := range t {
+		t[i] = i
+	}
+	return t
+}
+
+func newRank(size int) ([]int, []int) {
+	rt := make([]int, size)
+	rk := make([]int, size)
+	for i := range rt {
+		rt[i] = i
+		rk[i] = 1
+	}
+	return rt, rk
 }
