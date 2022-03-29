@@ -69,3 +69,52 @@ func (q *QuickFind) Connected(x, y int) (bool, error) {
 
 	return xp == yp, nil
 }
+
+type QuickUnion struct {
+	root []int
+	DisjointSet
+}
+
+func (q *QuickUnion) New(size int) {
+	q.root = new(size)
+}
+
+func (q *QuickUnion) Find(x int) (int, error) {
+	for x != q.root[x] {
+		x = q.root[x]
+	}
+	return x, nil
+}
+
+func (q *QuickUnion) Union(x, y int) error {
+	xr, err := q.Find(x)
+	if err != nil {
+		return err
+	}
+
+	yr, err := q.Find(y)
+	if err != nil {
+		return err
+	}
+
+	if xr == yr {
+		return fmt.Errorf("cannot union vertices that share a root")
+	}
+
+	q.root[yr] = xr
+
+	return nil
+}
+
+func (q *QuickUnion) Connected(x, y int) (bool, error) {
+	xp, err := q.Find(x)
+	if err != nil {
+		return false, err
+	}
+	yp, err := q.Find(y)
+	if err != nil {
+		return false, err
+	}
+
+	return xp == yp, nil
+}
