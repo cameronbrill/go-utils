@@ -193,3 +193,63 @@ func (q *UnionByRank) Connected(x, y int) (bool, error) {
 
 	return xp == yp, nil
 }
+
+type PathCompression struct {
+	root []int
+	DisjointSet
+}
+
+func (q *PathCompression) New(size int) {
+	q.root = new(size)
+}
+
+func (q *PathCompression) Find(x int) (int, error) {
+	if x < 0 || x >= len(q.root) {
+		return -1, fmt.Errorf("index out of bounds")
+	}
+
+	if x == q.root[x] {
+		return x, nil
+	}
+
+	var err error
+	q.root[x], err = q.Find(q.root[x])
+	if err != nil {
+		return -1, err
+	}
+
+	return q.root[x], nil
+}
+
+func (q *PathCompression) Union(x, y int) error {
+	xr, err := q.Find(x)
+	if err != nil {
+		return err
+	}
+
+	yr, err := q.Find(y)
+	if err != nil {
+		return err
+	}
+
+	if xr == yr {
+		return fmt.Errorf("cannot union vertices that share a root")
+	}
+
+	q.root[yr] = xr
+
+	return nil
+}
+
+func (q *PathCompression) Connected(x, y int) (bool, error) {
+	xp, err := q.Find(x)
+	if err != nil {
+		return false, err
+	}
+	yp, err := q.Find(y)
+	if err != nil {
+		return false, err
+	}
+
+	return xp == yp, nil
+}

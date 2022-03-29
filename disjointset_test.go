@@ -12,6 +12,7 @@ func TestUnionFind(t *testing.T) {
 		{name: "QuickFind", disjointSetImpl: &QuickFind{}},
 		{name: "QuickUnion", disjointSetImpl: &QuickUnion{}},
 		{name: "UnionByRank", disjointSetImpl: &UnionByRank{}},
+		{name: "PathCompression", disjointSetImpl: &PathCompression{}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
