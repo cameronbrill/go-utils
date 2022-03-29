@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 type DisjointSet interface {
+	New(size int)
 	Union(x, y int)  error
 	Find(x int) (int, error)
 	Connected(x, y int) (bool, error)
