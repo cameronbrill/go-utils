@@ -10,6 +10,75 @@ type UnionFinder interface {
 }
 
 
+type DisjointSet struct {
+	root []int
+	rank []int
+	UnionFinder
+}
+
+func (q *DisjointSet) New(size int) {
+	q.root, q.rank = newRank(size)
+}
+
+func (q *DisjointSet) Find(x int) (int, error) {
+	if x < 0 || x >= len(q.root) {
+		return -1, fmt.Errorf("index out of bounds")
+	}
+
+	if x == q.root[x] {
+		return x, nil
+	}
+
+	var err error
+	q.root[x], err = q.Find(q.root[x])
+	if err != nil {
+		return -1, err
+	}
+
+	return q.root[x], nil
+}
+
+func (q *DisjointSet) Union(x, y int) error {
+	xr, err := q.Find(x)
+	if err != nil {
+		return err
+	}
+
+	yr, err := q.Find(y)
+	if err != nil {
+		return err
+	}
+
+	if xr == yr {
+		return fmt.Errorf("cannot union vertices that share a root")
+	}
+
+	if q.rank[xr] > q.rank[yr] {
+		q.root[yr] = xr
+	} else if q.rank[xr] < q.rank[yr] {
+		q.root[xr] = yr
+	} else {
+		q.root[yr] = xr
+		q.rank[xr] += 1
+	}
+
+	return nil
+}
+
+func (q *DisjointSet) Connected(x, y int) (bool, error) {
+	xp, err := q.Find(x)
+	if err != nil {
+		return false, err
+	}
+	yp, err := q.Find(y)
+	if err != nil {
+		return false, err
+	}
+
+	return xp == yp, nil
+}
+
+
 type QuickFind struct {
 	root []int
 	UnionFinder

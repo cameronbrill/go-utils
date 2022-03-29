@@ -9,6 +9,7 @@ type test struct {
 
 func TestUnionFind(t *testing.T) {
 	var tests = []test{
+		{name: "DisjointSet", disjointSetImpl: &DisjointSet{}},
 		{name: "QuickFind", disjointSetImpl: &QuickFind{}},
 		{name: "QuickUnion", disjointSetImpl: &QuickUnion{}},
 		{name: "UnionByRank", disjointSetImpl: &UnionByRank{}},
