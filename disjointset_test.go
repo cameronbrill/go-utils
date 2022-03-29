@@ -11,6 +11,7 @@ func TestUnionFind(t *testing.T) {
 	var tests = []test{
 		{name: "QuickFind", disjointSetImpl: &QuickFind{}},
 		{name: "QuickUnion", disjointSetImpl: &QuickUnion{}},
+		{name: "UnionByRank", disjointSetImpl: &UnionByRank{}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

@@ -123,3 +123,73 @@ func (q *QuickUnion) Connected(x, y int) (bool, error) {
 
 	return xp == yp, nil
 }
+
+type UnionByRank struct {
+	root []int
+	rank []int
+	DisjointSet
+}
+
+func (q *UnionByRank) New(size int) {
+	rt := make([]int, size)
+	rk := make([]int, size)
+
+	for i := range rt {
+		rt[i] = i
+		rk[i] = 1
+	}
+
+	q.root = rt
+	q.rank = rk
+}
+
+func (q *UnionByRank) Find(x int) (int, error) {
+	if x < 0 || x >= len(q.root) {
+		return -1, fmt.Errorf("index out of bounds")
+	}
+
+	for x != q.root[x] {
+		x = q.root[x]
+	}
+	return x, nil
+}
+
+func (q *UnionByRank) Union(x, y int) error {
+	xr, err := q.Find(x)
+	if err != nil {
+		return err
+	}
+
+	yr, err := q.Find(y)
+	if err != nil {
+		return err
+	}
+
+	if xr == yr {
+		return fmt.Errorf("cannot union vertices that share a root")
+	}
+
+	if q.rank[xr] > q.rank[yr] {
+		q.root[yr] = xr
+	} else if q.rank[xr] < q.rank[yr] {
+		q.root[xr] = yr
+	} else {
+		q.root[yr] = xr
+		q.rank[xr] += 1
+	}
+
+	return nil
+}
+
+func (q *UnionByRank) Connected(x, y int) (bool, error) {
+	xp, err := q.Find(x)
+	if err != nil {
+		return false, err
+	}
+	yp, err := q.Find(y)
+	if err != nil {
+		return false, err
+	}
+
+	return xp == yp, nil
+}
